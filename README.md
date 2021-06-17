@@ -1,4 +1,4 @@
 # Flutter Guide Expenses
 
-A Basic Flutter Project to track expenses.
+**A Basic Flutter Project to track expenses**.
 
