@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_guide_expenses/models/transaction.dart';
+import 'package:flutter_guide_expenses/widgets/new_transaction.dart';
+import 'package:flutter_guide_expenses/widgets/transaction_list.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:flutter_guide_expenses/widgets/user_transaction.dart';
@@ -12,18 +15,80 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Personal Finances',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          primarySwatch: Colors.purple,
+          accentColor: Colors.amber,
+          fontFamily: 'Quicksand',
+          textTheme: ThemeData.light().textTheme.copyWith(
+                  title: TextStyle(
+                fontFamily: 'OpenSans',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              )),
+          appBarTheme: AppBarTheme(
+              textTheme: ThemeData.light().textTheme.copyWith(
+                    title: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 20,
+                    ),
+                  ))),
       home: MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   final titleController = TextEditingController();
+
   final amountController = TextEditingController();
+
+  final List<Transaction> _userTransactions = [
+    Transaction(
+      id: 'g1',
+      title: 'Carro',
+      amount: 123.56,
+      date: DateTime.now(),
+    ),
+    Transaction(
+      id: 'g2',
+      title: 'Chinelo',
+      amount: 23.56,
+      date: DateTime.now(),
+    )
+  ];
+
+  void _addNewTransaction(String txTitle, double txAmount) {
+    final newTx = Transaction(
+      title: txTitle,
+      amount: txAmount,
+      date: DateTime.now(),
+      id: DateTime.now().toString(),
+    );
+
+    setState(() {
+      _userTransactions.add(newTx);
+    });
+  }
+
+  void startAddNewTransaction(BuildContext ctx) {
+    showModalBottomSheet(
+      context: ctx,
+      builder: (_) {
+        //eu uso underscore quando possuo um parametro que sou forcado a declarar mais nao vou usar
+        return GestureDetector(
+          onTap: () {},
+          child: NewTransaction(_addNewTransaction),
+          behavior: HitTestBehavior.opaque,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +98,7 @@ class MyHomePage extends StatelessWidget {
         title: Text('Flutter Guide'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => startAddNewTransaction(context),
             icon: Icon(Icons.add),
           ),
         ],
@@ -50,14 +115,14 @@ class MyHomePage extends StatelessWidget {
                   child: Text('chart'),
                 ),
               ),
-              UserTransactions(),
+              TransactionList(_userTransactions),
             ],
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => startAddNewTransaction(context),
         child: Icon(Icons.add),
       ),
     );
