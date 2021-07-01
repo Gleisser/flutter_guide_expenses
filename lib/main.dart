@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_guide_expenses/models/transaction.dart';
+import 'package:flutter_guide_expenses/widgets/chart.dart';
 import 'package:flutter_guide_expenses/widgets/new_transaction.dart';
 import 'package:flutter_guide_expenses/widgets/transaction_list.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
-import 'package:flutter_guide_expenses/widgets/user_transaction.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,22 +16,29 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Finances',
       theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.amber,
-          fontFamily: 'Quicksand',
-          textTheme: ThemeData.light().textTheme.copyWith(
-                  title: TextStyle(
+        primarySwatch: Colors.purple,
+        accentColor: Colors.amber,
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+              title: TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-              )),
-          appBarTheme: AppBarTheme(
-              textTheme: ThemeData.light().textTheme.copyWith(
-                    title: TextStyle(
-                      fontFamily: 'OpenSans',
-                      fontSize: 20,
-                    ),
-                  ))),
+              ),
+              button: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+        appBarTheme: AppBarTheme(
+          textTheme: ThemeData.light().textTheme.copyWith(
+                title: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 20,
+                ),
+              ),
+        ),
+        errorColor: Colors.red,
+      ),
       home: MyHomePage(),
     );
   }
@@ -48,31 +54,32 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final amountController = TextEditingController();
 
-  final List<Transaction> _userTransactions = [
-    Transaction(
-      id: 'g1',
-      title: 'Carro',
-      amount: 123.56,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: 'g2',
-      title: 'Chinelo',
-      amount: 23.56,
-      date: DateTime.now(),
-    )
-  ];
+  final List<Transaction> _userTransactions = [];
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  List<Transaction> get _recentTransaction {
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
+  void _addNewTransaction(
+      String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
-      date: DateTime.now(),
+      date: chosenDate,
       id: DateTime.now().toString(),
     );
 
     setState(() {
       _userTransactions.add(newTx);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      print('i`m here');
+      _userTransactions.removeWhere((element) => element.id == id);
     });
   }
 
@@ -108,14 +115,8 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                width: double.infinity,
-                child: Card(
-                  color: Colors.blue,
-                  child: Text('chart'),
-                ),
-              ),
-              TransactionList(_userTransactions),
+              Chart(_recentTransaction),
+              TransactionList(_userTransactions, _deleteTransaction),
             ],
           ),
         ),
