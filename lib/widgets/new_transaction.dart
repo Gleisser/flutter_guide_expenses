@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_guide_expenses/widgets/adaptive_flat_button.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -49,7 +53,6 @@ class _NewTransactionState extends State<NewTransaction> {
       setState(() {
         _selectedDate = value;
       });
-      print(_selectedDate);
     });
   }
 
@@ -96,16 +99,7 @@ class _NewTransactionState extends State<NewTransaction> {
                             : 'Selected Date: ${DateFormat.yMMMEd().format(_selectedDate)}',
                       ),
                     ),
-                    FlatButton(
-                      textColor: Theme.of(context).primaryColor,
-                      onPressed: _presentDatePicker,
-                      child: Text(
-                        'Choose Date',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )
+                    AdaptiveFlatButton('Choose Date', _presentDatePicker)
                   ],
                 ),
               ),
