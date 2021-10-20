@@ -21,6 +21,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  // testing vs code in the browser
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
